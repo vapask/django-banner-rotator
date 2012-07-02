@@ -17,7 +17,11 @@ Get the code via git:
 
 Add the django-banner-rotator/banner_rotator folder to your PYTHONPATH.
 
-Edit to settings.py:
+Or get app via pip:
+
+    pip install -e git+git://github.com/vapask/django-banner-rotator.git#egg=django-banner-rotator
+
+Add "banner_rotator" to INSTALLED_APPS:
 
     INSTALLED_APPS = (
 
@@ -25,7 +29,7 @@ Edit to settings.py:
 
     )
 
-Edit to urls.py:
+Edit urls.py:
 
     urlpatterns = patterns('',
 
@@ -33,12 +37,12 @@ Edit to urls.py:
 
     )
 
-Add the template:
+Add to the template:
 
     {% load banners %}
     {% banner place-slug %}
 
-or
+or manually:
 
     {% load banners %}
     {% banner place-slug as banner %}

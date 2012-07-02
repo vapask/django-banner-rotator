@@ -17,7 +17,11 @@ README
     
 И добавьте папку django-banner-rotator/banner_rotator в ваш PYTHONPATH.
 
-Отредактируйте settings.py:
+Или установите с помощью pip:
+
+    pip install -e git+git://github.com/vapask/django-banner-rotator.git@egg=django-banner-rotator
+
+Добавьте banner_rotator в INSTALLED_APPS:
 
     INSTALLED_APPS = (
 
