@@ -26,7 +26,7 @@ class BannerNode(template.Node):
 
         try:
             banner_obj = Banner.objects.biased_choice(self.place)
-            banner_obj.view()
+            banner_obj.view(request=context.get("request", None))
         except Banner.DoesNotExist:
             banner_obj = None
 

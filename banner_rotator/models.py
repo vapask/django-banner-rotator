@@ -5,6 +5,7 @@ try:
 except ImportError:
     from md5 import md5
 from time import time
+from datetime import datetime
 
 from django.contrib.auth.models import User
 from django.db import models
@@ -113,9 +114,12 @@ class Banner(models.Model):
     def is_swf(self):
         return self.file.name.lower().endswith("swf")
 
-    def view(self):
+    def view(self, request=None):
         self.views = models.F('views') + 1
         self.save()
+        if request is not None:
+            request.session.setdefault("banners_last_view", {})
+            request.session["banners_last_view"][self.id] = datetime.now()
         return ''
 
     def click(self, request):
