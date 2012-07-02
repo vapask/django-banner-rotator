@@ -45,7 +45,10 @@ class BannerAdmin(admin.ModelAdmin):
         }),
         (_('Show'), {
             'fields': ('weight', 'views', 'max_views', 'clicks', 'max_clicks', 'start_at', 'finish_at', 'is_active'),
-        })
+        }),
+        (_('Common'), {
+            'fields': ('timeout',),
+        }),
     )
 
     filter_horizontal = ('places',)
