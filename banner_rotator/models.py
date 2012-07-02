@@ -5,14 +5,18 @@ try:
 except ImportError:
     from md5 import md5
 from time import time
-from datetime import datetime
+import datetime
 
 from django.contrib.auth.models import User
 from django.db import models
 from django.core.validators import MaxLengthValidator
 from django.utils.translation import ugettext_lazy as _
+from django.conf import settings
 
 from banner_rotator.managers import BannerManager
+
+
+SESSION_DICT_NAME = getattr(settings, "BANNERS_SESSION_DICT_NAME", "banners_last_view")
 
 
 def get_banner_upload_to(instance, filename):
@@ -98,6 +102,8 @@ class Banner(models.Model):
 
     timeout = models.PositiveSmallIntegerField(_('Timeout in seconds'), default=0)
 
+    show_any_time = models.BooleanField(_('Show banner any time'), default=False)
+
     is_active = models.BooleanField(_('Is active'), default=True)
 
     places = models.ManyToManyField(Place, verbose_name=_('Place'), related_name="banners", db_index=True)
@@ -118,9 +124,22 @@ class Banner(models.Model):
         self.views = models.F('views') + 1
         self.save()
         if request is not None:
-            request.session.setdefault("banners_last_view", {})
-            request.session["banners_last_view"][self.id] = datetime.now()
+            request.session.setdefault(SESSION_DICT_NAME, {})
+            request.session[SESSION_DICT_NAME][self.id] = datetime.datetime.now()
         return ''
+
+    def viewed(self, request=None):
+        if request is None or self.show_any_time:
+            return False
+        banners_last_view = request.session.get(SESSION_DICT_NAME, {})
+        if self.id in banners_last_view:
+            if datetime.datetime.now().day != banners_last_view[self.id].day:
+                del request.session[SESSION_DICT_NAME][self.id]
+                return False
+            else:
+                return True
+        else:
+            return False
 
     def click(self, request):
         self.clicks = models.F('clicks') + 1

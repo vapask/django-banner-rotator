@@ -19,6 +19,7 @@ class BannerNode(template.Node):
         self.varname, self.place_slug = varname, place_slug
 
     def render(self, context):
+        request = context.get("request", None)
         try:
             self.place = Place.objects.get(slug=self.place_slug)
         except Place.DoesNotExist:
@@ -26,7 +27,9 @@ class BannerNode(template.Node):
 
         try:
             banner_obj = Banner.objects.biased_choice(self.place)
-            banner_obj.view(request=context.get("request", None))
+            banner_obj.is_viewed = banner_obj.viewed(request)
+            if not banner_obj.viewed(request):
+                banner_obj.view(request=request)
         except Banner.DoesNotExist:
             banner_obj = None
 

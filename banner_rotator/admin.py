@@ -47,7 +47,7 @@ class BannerAdmin(admin.ModelAdmin):
             'fields': ('weight', 'views', 'max_views', 'clicks', 'max_clicks', 'start_at', 'finish_at', 'is_active'),
         }),
         (_('Common'), {
-            'fields': ('timeout',),
+            'fields': ('timeout', 'show_any_time'),
         }),
     )
 
