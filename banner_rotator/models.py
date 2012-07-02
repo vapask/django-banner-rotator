@@ -95,6 +95,8 @@ class Banner(models.Model):
     start_at = models.DateTimeField(_('Start at'), blank=True, null=True, default=None)
     finish_at = models.DateTimeField(_('Finish at'), blank=True, null=True, default=None)
 
+    timeout = models.PositiveSmallIntegerField(_('Timeout in seconds'), default=0)
+
     is_active = models.BooleanField(_('Is active'), default=True)
 
     places = models.ManyToManyField(Place, verbose_name=_('Place'), related_name="banners", db_index=True)
