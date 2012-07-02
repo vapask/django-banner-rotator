@@ -13,10 +13,6 @@ def pick(bias_list):
         and item(n)_weight as the probability when calculating an item to choose
     """
 
-    # All weights should add up to 1
-    #   an items weight is equivalent to it's probability of being picked
-    assert sum(i[1] for i in bias_list) == 1
-
     # Django ORM returns floats as Decimals,
     #   so we'll convert floats to decimals here to co-operate
     number = Decimal("%.18f" % random())
