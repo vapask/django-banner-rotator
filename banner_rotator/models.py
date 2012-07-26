@@ -17,6 +17,7 @@ from banner_rotator.managers import BannerManager
 
 
 SESSION_DICT_NAME = getattr(settings, "BANNERS_SESSION_DICT_NAME", "banners_last_view")
+SESSION_PERMANENT_DICT_NAME = getattr(settings, "BANNERS_SESSION_PERMANENT_DICT_NAME", "banners_permanent_viewed")
 
 
 def get_banner_upload_to(instance, filename):
@@ -100,9 +101,11 @@ class Banner(models.Model):
     start_at = models.DateTimeField(_('Start at'), blank=True, null=True, default=None)
     finish_at = models.DateTimeField(_('Finish at'), blank=True, null=True, default=None)
 
-    timeout = models.PositiveSmallIntegerField(_('Timeout in seconds'), default=0)
+    timeout = models.PositiveSmallIntegerField("Таймаут в секундaх", default=0)
 
-    show_any_time = models.BooleanField(_('Show banner any time'), default=False)
+    show_any_time = models.BooleanField("Показывать при каждом заходе", default=False,
+                                        help_text="Если установлено, то баннер будет показываться при каждом \
+                                                   заходе не страницу, в противном случае только раз в день")
 
     is_active = models.BooleanField(_('Is active'), default=True)
 
@@ -126,9 +129,14 @@ class Banner(models.Model):
         if request is not None:
             request.session.setdefault(SESSION_DICT_NAME, {})
             request.session[SESSION_DICT_NAME][self.id] = datetime.datetime.now()
+            request.session.setdefault(SESSION_PERMANENT_DICT_NAME, {})
+            request.session.modified = True
         return ''
 
     def viewed(self, request=None):
+        banners_permanent_viewed = request.session.get(SESSION_PERMANENT_DICT_NAME, {})
+        if self.id in banners_permanent_viewed:
+            return True
         if request is None or self.show_any_time:
             return False
         banners_last_view = request.session.get(SESSION_DICT_NAME, {})
